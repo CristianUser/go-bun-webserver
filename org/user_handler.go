@@ -3,7 +3,6 @@ package org
 import (
 	"errors"
 	"net/http"
-	"time"
 
 	"github.com/uptrace/bunrouter"
 	"golang.org/x/crypto/bcrypt"
@@ -29,8 +28,10 @@ func NewUserHandler(app *bunapp.App) UserHandler {
 
 func (*UserHandler) Current(w http.ResponseWriter, req bunrouter.Request) error {
 	user := UserFromContext(req.Context())
+	session := SessionFromContext(req.Context())
 	return bunrouter.JSON(w, bunrouter.H{
-		"user": user,
+		"user":    user,
+		"session": session,
 	})
 }
 
@@ -52,7 +53,7 @@ func (h UserHandler) Create(w http.ResponseWriter, req bunrouter.Request) error 
 	user := in.User
 
 	var err error
-	user.PasswordHash, err = hashPassword(user.Password)
+	user.Password, err = hashPassword(user.Password)
 	if err != nil {
 		return err
 	}
@@ -60,10 +61,6 @@ func (h UserHandler) Create(w http.ResponseWriter, req bunrouter.Request) error 
 	if _, err := h.app.DB().NewInsert().
 		Model(user).
 		Exec(ctx); err != nil {
-		return err
-	}
-
-	if err := setUserToken(h.app, user); err != nil {
 		return err
 	}
 
@@ -77,37 +74,33 @@ func (h UserHandler) Login(w http.ResponseWriter, req bunrouter.Request) error {
 	ctx := req.Context()
 
 	var in struct {
-		User *struct {
-			Email    string `json:"email"`
-			Password string `json:"password"`
-		} `json:"user"`
+		Username string `json:"username"`
+		Password string `json:"password"`
 	}
 	if err := httputil.UnmarshalJSON(w, req, &in, 10<<kb); err != nil {
 		return err
 	}
 
-	if in.User == nil {
-		return errors.New(`JSON field "user" is required`)
-	}
-
 	user := new(User)
 	if err := h.app.DB().NewSelect().
 		Model(user).
-		Where("email = ?", in.User.Email).
+		Where("username = ? OR email = ?", in.Username, in.Username).
 		Scan(ctx); err != nil {
 		return err
 	}
 
-	if err := comparePasswords(user.PasswordHash, in.User.Password); err != nil {
+	if err := user.ComparePassword(in.Password); err != nil {
 		return err
 	}
 
-	if err := setUserToken(h.app, user); err != nil {
+	session, err := user.CreateSession(h.app)
+	if err != nil {
 		return err
 	}
 
 	return bunrouter.JSON(w, bunrouter.H{
-		"user": user,
+		"user":  user,
+		"token": session.Token,
 	})
 }
 
@@ -130,7 +123,7 @@ func (h UserHandler) Update(w http.ResponseWriter, req bunrouter.Request) error 
 	user := in.User
 
 	var err error
-	user.PasswordHash, err = hashPassword(user.Password)
+	user.Password, err = hashPassword(user.Password)
 	if err != nil {
 		return err
 	}
@@ -139,9 +132,8 @@ func (h UserHandler) Update(w http.ResponseWriter, req bunrouter.Request) error 
 		Model(authUser).
 		Set("email = ?", user.Email).
 		Set("username = ?", user.Username).
-		Set("password_hash = ?", user.PasswordHash).
+		Set("password = ?", user.Password).
 		Set("image = ?", user.Image).
-		Set("bio = ?", user.Bio).
 		Where("id = ?", authUser.ID).
 		Returning("*").
 		Exec(ctx); err != nil {
@@ -206,7 +198,6 @@ func (h UserHandler) Follow(w http.ResponseWriter, req bunrouter.Request) error 
 		return err
 	}
 
-	user.Following = true
 	return bunrouter.JSON(w, bunrouter.H{
 		"profile": NewProfile(user),
 	})
@@ -229,19 +220,9 @@ func (h UserHandler) Unfollow(w http.ResponseWriter, req bunrouter.Request) erro
 		return err
 	}
 
-	user.Following = false
 	return bunrouter.JSON(w, bunrouter.H{
 		"profile": NewProfile(user),
 	})
-}
-
-func setUserToken(app *bunapp.App, user *User) error {
-	token, err := CreateUserToken(app, user.ID, 24*time.Hour)
-	if err != nil {
-		return err
-	}
-	user.Token = token
-	return nil
 }
 
 func hashPassword(pass string) (string, error) {
@@ -250,12 +231,4 @@ func hashPassword(pass string) (string, error) {
 		return "", err
 	}
 	return string(bytes), nil
-}
-
-func comparePasswords(hash, pass string) error {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(pass))
-	if err != nil {
-		return errUserNotFound
-	}
-	return nil
 }

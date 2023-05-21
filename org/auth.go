@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/uptrace/bun-realworld-app/bunapp"
 	"github.com/uptrace/bun-realworld-app/httputil"
@@ -12,13 +11,20 @@ import (
 )
 
 type (
-	userCtxKey    struct{}
-	userErrCtxKey struct{}
+	userCtxKey       struct{}
+	userErrCtxKey    struct{}
+	sessionCtxKey    struct{}
+	sessionErrCtxKey struct{}
 )
 
 func UserFromContext(ctx context.Context) *User {
 	user, _ := ctx.Value(userCtxKey{}).(*User)
 	return user
+}
+
+func SessionFromContext(ctx context.Context) *Session {
+	session, _ := ctx.Value(sessionCtxKey{}).(*Session)
+	return session
 }
 
 func authToken(req bunrouter.Request) string {
@@ -46,10 +52,7 @@ func (m Middleware) User(next bunrouter.HandlerFunc) bunrouter.HandlerFunc {
 		userID, err := decodeUserToken(m.app, token)
 		if err != nil {
 			ctx = context.WithValue(ctx, userErrCtxKey{}, err)
-			return httputil.JSON(w, bunrouter.H{
-				"ok":      false,
-				"message": "Invalid token",
-			}, http.StatusUnauthorized)
+			return next(w, req.WithContext(ctx))
 		}
 
 		user, err := SelectUser(ctx, m.app, userID)
@@ -58,22 +61,39 @@ func (m Middleware) User(next bunrouter.HandlerFunc) bunrouter.HandlerFunc {
 			return next(w, req.WithContext(ctx))
 		}
 
-		user.Token, err = CreateUserToken(m.app, user.ID, 24*time.Hour)
+		session, err := SelectSessionByToken(ctx, m.app, token)
 		if err != nil {
-			ctx = context.WithValue(ctx, userErrCtxKey{}, err)
+			ctx = context.WithValue(ctx, sessionErrCtxKey{}, err)
+			return next(w, req.WithContext(ctx))
+		}
+
+		err = session.UpdateLastTimeActive(ctx, m.app)
+		if err != nil {
+			ctx = context.WithValue(ctx, sessionErrCtxKey{}, err)
 			return next(w, req.WithContext(ctx))
 		}
 
 		ctx = context.WithValue(ctx, userCtxKey{}, user)
+		ctx = context.WithValue(ctx, sessionCtxKey{}, session)
 		return next(w, req.WithContext(ctx))
 	}
 }
 
 func (m Middleware) MustUser(next bunrouter.HandlerFunc) bunrouter.HandlerFunc {
 	return func(w http.ResponseWriter, req bunrouter.Request) error {
-		if err, ok := req.Context().Value(userErrCtxKey{}).(error); ok {
-			return err
+		if _, ok := req.Context().Value(userErrCtxKey{}).(error); ok {
+			return httputil.JSON(w, bunrouter.H{
+				"ok":      false,
+				"message": "Invalid token",
+			}, http.StatusUnauthorized)
 		}
+		if _, ok := req.Context().Value(sessionErrCtxKey{}).(error); ok {
+			return httputil.JSON(w, bunrouter.H{
+				"ok":      false,
+				"message": "Invalid token",
+			}, http.StatusUnauthorized)
+		}
+
 		return next(w, req)
 	}
 }

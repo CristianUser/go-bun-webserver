@@ -38,9 +38,9 @@ var _ = Describe("createArticle", func() {
 
 	createFollowedUser := func() *org.User {
 		followedUser := &org.User{
-			Username:     "FollowedUser",
-			Email:        "foo@bar.com",
-			PasswordHash: "h2",
+			Username: "FollowedUser",
+			Email:    "foo@bar.com",
+			Password: "h2",
 		}
 		_, err := app.DB().NewInsert().Model(followedUser).Exec(ctx)
 		Expect(err).NotTo(HaveOccurred())
