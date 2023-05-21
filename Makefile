@@ -8,6 +8,9 @@ start-services:
 stop-services:
 	docker-compose down
 
+build-image:
+	docker build -t prone .
+
 db_reset:
 	sudo -u postgres psql -c "DROP DATABASE IF EXISTS prone"
 	sudo -u postgres psql -c "CREATE DATABASE prone"

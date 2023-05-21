@@ -1,37 +1,29 @@
-FROM golang:1.20 AS builder
+# syntax=docker/dockerfile:1
 
-COPY ../ /app
+FROM golang:1.20
+
+# Set destination for COPY
 WORKDIR /app
-RUN ls
-# Toggle CGO on your app requirement
-RUN CGO_ENABLED=0 go build -ldflags '-s -w -extldflags "-static"' -o /app/appbin main.go
-# Use below if using vendor
-# RUN CGO_ENABLED=0 go build -mod=vendor -ldflags '-extldflags "-static"' -o /app/appbin *.go
 
-FROM debian:stable-slim
-LABEL MAINTAINER Author <author@example.com>
+# Download Go modules
+COPY go.mod go.sum ./
+RUN go mod download
 
-# Following commands are for installing CA certs (for proper functioning of HTTPS and other TLS)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-		ca-certificates  \
-        netbase \
-        && rm -rf /var/lib/apt/lists/ \
-        && apt-get autoremove -y && apt-get autoclean -y
+# Copy the source code. Note the slash at the end, as explained in
+# https://docs.docker.com/engine/reference/builder/#copy
+COPY ../ ./
 
-# Add new user 'appuser'. App should be run without root privileges as a security measure
-RUN adduser --home "/appuser" --disabled-password appuser \
-    --gecos "appuser,-,-,-"
-USER appuser
+RUN mkdir ./docker-gs-ping
 
-COPY --from=builder /app/internal/server/http/web /home/appuser/app/web
-COPY --from=builder /app/appbin /home/appuser/app
+# Build
+RUN CGO_ENABLED=0 GOOS=linux go build -o /docker-gs-ping ./cmd/bun
 
-ENV TEMPLATES_BASEPATH=/home/appuser/app/web/templates
-
-WORKDIR /home/appuser/app
-
-# Since running as a non-root user, port bindings < 1024 are not possible
-# 8000 for HTTP; 8443 for HTTPS;
+# Optional:
+# To bind to a TCP port, runtime parameters must be supplied to the docker command.
+# But we can document in the Dockerfile what ports
+# the application is going to listen on by default.
+# https://docs.docker.com/engine/reference/builder/#expose
 EXPOSE 8000
 
-CMD ["./appbin"]
+# Run
+CMD ["/docker-gs-ping", "-env=dev", "api"]
