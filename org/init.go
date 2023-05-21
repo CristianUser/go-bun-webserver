@@ -11,6 +11,8 @@ func init() {
 		middleware := NewMiddleware(app)
 		userHandler := NewUserHandler(app)
 
+		app.Router().GET("/health", HealthCheckHandler)
+
 		g := app.APIRouter().WithMiddleware(middleware.User)
 
 		g.POST("/users", userHandler.Create)

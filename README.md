@@ -19,7 +19,7 @@ The project uses Bun [starter kit](https://bun.uptrace.dev/guide/starter-kit.htm
 the following packages:
 
 - [bunapp](bunapp) package parses configs, establishes DB connections etc.
-- [org](org) package manages users and tokens.
+- [org](org) package manages users and sessions.
 - [blog](blog) package manages articles and comments.
 - [cmd/bun](cmd/bun) provides CLI commands to run HTTP server and work with DB.
 - [cmd/bun/migrations](cmd/bun/migrations) contains database migrations.
@@ -29,7 +29,7 @@ The most interesting part for Bun users is probably [article filter](blog/articl
 ## Project bootstrap
 
 Project comes with a `Makefile` that contains following recipes:
-
+- `make start` start docker containers, run migrations and run HTTP server.
 - `make db_reset` drops existing database and creates a new one.
 - `make test` runs unit tests.
 - `make api_test` runs API tests provided by
