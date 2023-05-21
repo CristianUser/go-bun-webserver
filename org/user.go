@@ -5,8 +5,8 @@ import (
 	"errors"
 	"time"
 
+	"github.com/cristianuser/go-bun-webserver/bunapp"
 	"github.com/uptrace/bun"
-	"github.com/uptrace/bun-realworld-app/bunapp"
 	"golang.org/x/crypto/bcrypt"
 )
 

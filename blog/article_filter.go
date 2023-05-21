@@ -1,10 +1,10 @@
 package blog
 
 import (
+	"github.com/cristianuser/go-bun-webserver/bunapp"
+	"github.com/cristianuser/go-bun-webserver/org"
 	"github.com/go-pg/urlstruct"
 	"github.com/uptrace/bun"
-	"github.com/uptrace/bun-realworld-app/bunapp"
-	"github.com/uptrace/bun-realworld-app/org"
 	"github.com/uptrace/bunrouter"
 )
 

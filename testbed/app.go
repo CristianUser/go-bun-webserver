@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/benbjohnson/clock"
-	"github.com/uptrace/bun-realworld-app/bunapp"
-	"github.com/uptrace/bun-realworld-app/org"
+	"github.com/cristianuser/go-bun-webserver/bunapp"
+	"github.com/cristianuser/go-bun-webserver/org"
 )
 
 type TestApp struct {

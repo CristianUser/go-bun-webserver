@@ -3,7 +3,7 @@ package org
 import (
 	"context"
 
-	"github.com/uptrace/bun-realworld-app/bunapp"
+	"github.com/cristianuser/go-bun-webserver/bunapp"
 )
 
 func init() {

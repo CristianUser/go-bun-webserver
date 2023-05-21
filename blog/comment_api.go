@@ -4,9 +4,9 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/uptrace/bun-realworld-app/bunapp"
-	"github.com/uptrace/bun-realworld-app/httputil"
-	"github.com/uptrace/bun-realworld-app/org"
+	"github.com/cristianuser/go-bun-webserver/bunapp"
+	"github.com/cristianuser/go-bun-webserver/httputil"
+	"github.com/cristianuser/go-bun-webserver/org"
 	"github.com/uptrace/bunrouter"
 )
 

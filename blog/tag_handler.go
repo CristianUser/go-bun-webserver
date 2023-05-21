@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"net/http"
 
-	"github.com/uptrace/bun-realworld-app/bunapp"
+	"github.com/cristianuser/go-bun-webserver/bunapp"
 	"github.com/uptrace/bunrouter"
 )
 

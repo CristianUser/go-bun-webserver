@@ -1,14 +1,14 @@
-# Go treemux + bun realworld application
+# Go bunrouter + bun application example
 
 [![build workflow](https://github.com/go-bun/bun-realworld-app/actions/workflows/build.yml/badge.svg)](https://github.com/go-bun/bun-realworld-app/actions)
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/uptrace/bun-realworld-app)](https://pkg.go.dev/github.com/uptrace/bun-realworld-app)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/cristianuser/go-bun-webserver)](https://pkg.go.dev/github.com/cristianuser/go-bun-webserver)
 
 ## Introduction
 
 This project implements RealWorld JSON API as specified in the
 [spec](https://github.com/gothinkster/realworld). It was created to demonstrate how to use:
 
-- [treemux HTTP router](https://github.com/vmihailenco/treemux).
+- [Bun Router](https://github.com/uptrace/bunrouter).
 - [Bun DB](https://github.com/uptrace/bun).
 - [bun/migrate](https://bun.uptrace.dev/guide/migrations.html).
 - [bun/dbfixture](https://bun.uptrace.dev/guide/fixtures.html).

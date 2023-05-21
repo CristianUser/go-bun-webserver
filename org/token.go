@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/cristianuser/go-bun-webserver/bunapp"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/uptrace/bun-realworld-app/bunapp"
 )
 
 func decodeUserToken(app *bunapp.App, jwtToken string) (uint64, error) {

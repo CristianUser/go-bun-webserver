@@ -39,13 +39,13 @@ func JSON(w http.ResponseWriter, value interface{}, s int) error {
 	return nil
 }
 
-// func BindJSON(
-// 	w http.ResponseWriter,
-// 	req bunrouter.Request,
-// 	dst interface{},
-// ) error {
-// 	if err := UnmarshalJSON(w, req, dst, 10); err != nil {
-// 		return err
-// 	}
-// 	return Validate(w, dst)
-// }
+func BindJSON(
+	w http.ResponseWriter,
+	req bunrouter.Request,
+	dst interface{},
+) error {
+	if err := UnmarshalJSON(w, req, dst, 10); err != nil {
+		return err
+	}
+	return nil
+}

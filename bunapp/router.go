@@ -3,7 +3,7 @@ package bunapp
 import (
 	"net/http"
 
-	"github.com/uptrace/bun-realworld-app/httputil/httperror"
+	"github.com/cristianuser/go-bun-webserver/httputil/httperror"
 	"github.com/uptrace/bunrouter"
 	"github.com/uptrace/bunrouter/extra/bunrouterotel"
 	"github.com/uptrace/bunrouter/extra/reqlog"

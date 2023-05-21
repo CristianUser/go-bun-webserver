@@ -3,8 +3,8 @@ package blog
 import (
 	"time"
 
+	"github.com/cristianuser/go-bun-webserver/org"
 	"github.com/uptrace/bun"
-	"github.com/uptrace/bun-realworld-app/org"
 )
 
 type Comment struct {

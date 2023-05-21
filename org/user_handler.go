@@ -7,9 +7,9 @@ import (
 	"github.com/uptrace/bunrouter"
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/cristianuser/go-bun-webserver/bunapp"
+	"github.com/cristianuser/go-bun-webserver/httputil"
 	"github.com/uptrace/bun"
-	"github.com/uptrace/bun-realworld-app/bunapp"
-	"github.com/uptrace/bun-realworld-app/httputil"
 )
 
 const kb = 10

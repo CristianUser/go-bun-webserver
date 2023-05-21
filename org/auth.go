@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/uptrace/bun-realworld-app/bunapp"
-	"github.com/uptrace/bun-realworld-app/httputil"
+	"github.com/cristianuser/go-bun-webserver/bunapp"
+	"github.com/cristianuser/go-bun-webserver/httputil"
 	"github.com/uptrace/bunrouter"
 )
 

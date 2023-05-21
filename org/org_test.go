@@ -8,8 +8,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/uptrace/bun-realworld-app/org"
-	"github.com/uptrace/bun-realworld-app/testbed"
+	"github.com/cristianuser/go-bun-webserver/org"
+	"github.com/cristianuser/go-bun-webserver/testbed"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

@@ -1,4 +1,4 @@
-module github.com/uptrace/bun-realworld-app
+module github.com/cristianuser/go-bun-webserver
 
 go 1.16
 

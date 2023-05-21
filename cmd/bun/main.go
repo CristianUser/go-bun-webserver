@@ -8,11 +8,11 @@ import (
 	"strings"
 	"time"
 
-	_ "github.com/uptrace/bun-realworld-app/blog"
-	"github.com/uptrace/bun-realworld-app/bunapp"
-	"github.com/uptrace/bun-realworld-app/cmd/bun/migrations"
-	"github.com/uptrace/bun-realworld-app/httputil"
-	_ "github.com/uptrace/bun-realworld-app/org"
+	_ "github.com/cristianuser/go-bun-webserver/blog"
+	"github.com/cristianuser/go-bun-webserver/bunapp"
+	"github.com/cristianuser/go-bun-webserver/cmd/bun/migrations"
+	"github.com/cristianuser/go-bun-webserver/httputil"
+	_ "github.com/cristianuser/go-bun-webserver/org"
 	"github.com/uptrace/bun/migrate"
 	"github.com/urfave/cli/v2"
 )

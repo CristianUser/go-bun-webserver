@@ -3,8 +3,8 @@ package blog
 import (
 	"context"
 
-	"github.com/uptrace/bun-realworld-app/bunapp"
-	"github.com/uptrace/bun-realworld-app/org"
+	"github.com/cristianuser/go-bun-webserver/bunapp"
+	"github.com/cristianuser/go-bun-webserver/org"
 )
 
 func init() {
