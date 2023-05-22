@@ -70,40 +70,6 @@ func (h UserHandler) Create(w http.ResponseWriter, req bunrouter.Request) error 
 	})
 }
 
-func (h UserHandler) Login(w http.ResponseWriter, req bunrouter.Request) error {
-	ctx := req.Context()
-
-	var in struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-	}
-	if err := httputil.UnmarshalJSON(w, req, &in, 10<<kb); err != nil {
-		return err
-	}
-
-	user := new(User)
-	if err := h.app.DB().NewSelect().
-		Model(user).
-		Where("username = ? OR email = ?", in.Username, in.Username).
-		Scan(ctx); err != nil {
-		return err
-	}
-
-	if err := user.ComparePassword(in.Password); err != nil {
-		return err
-	}
-
-	session, err := user.CreateSession(h.app)
-	if err != nil {
-		return err
-	}
-
-	return bunrouter.JSON(w, bunrouter.H{
-		"user":  user,
-		"token": session.Token,
-	})
-}
-
 func (h UserHandler) Update(w http.ResponseWriter, req bunrouter.Request) error {
 	ctx := req.Context()
 	authUser := UserFromContext(ctx)
